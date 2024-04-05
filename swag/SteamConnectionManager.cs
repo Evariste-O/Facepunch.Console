@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace swag
 {
-	internal class SteamConnectionManager : ConnectionManager
+	public class SteamConnectionManager : ConnectionManager
 	{
 		public override void OnConnected( ConnectionInfo info )
 		{

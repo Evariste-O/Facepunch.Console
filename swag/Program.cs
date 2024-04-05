@@ -28,6 +28,9 @@ while ( true )
 		case "join":
 			steamManager.JoinLobby( parameter );
 			break;
+		case "sendMessage":
+			steamManager.SteamConnectionManager.Connection.SendMessage( parameter );
+			break;
 		default: break;
 	}
 }

@@ -9,6 +9,10 @@ namespace swag
 	{
 		private Lobby hostedLobby { get; set; }
 		private List<Lobby> AvailabeLobbies { get; set; } = new List<Lobby>();
+		private SteamId PlayerSteamId { get; set; }
+		public bool isHost { get; set; }
+		public SteamSocketManager SteamSocketManager { get; set; }
+		public SteamConnectionManager SteamConnectionManager { get; set; }
 
 		public SteamManager() {
 			try
@@ -20,6 +24,7 @@ namespace swag
 					throw new Exception();
 				}
 				Console.WriteLine($"SteamClient Connected: {SteamClient.Name}");
+				PlayerSteamId = SteamClient.SteamId;
 			}
 			catch (Exception )
 			{
@@ -41,12 +46,13 @@ namespace swag
 		{
 			if(lobby.MemberCount > 1 )
 			{
-				Console.WriteLine( "you entered a Lobby: " + lobby.Id);
+				Console.WriteLine( $"you entered {lobby.Owner.Name}'s Lobby: " );
 			}
 			else
 			{
 				Console.WriteLine("you have joined your own lobby: " + lobby.Id);
 			}
+			JoinSteamSocketServer( lobby.Owner.Id );
 		}
 
 		private void OnLobbyDisconnectedCallback( Lobby lobby, Friend friend) 
@@ -74,6 +80,8 @@ namespace swag
 			{
 				Console.WriteLine("lobby created!");
 			}
+
+			CreateSteamSocketServer();
 		}
 
 		private void OnLobbyGameCreatedCallback( Lobby lobby, uint id, ushort port, SteamId steamId )
@@ -146,11 +154,34 @@ namespace swag
 			}
 		}
 
-		public void run()
+		public  async void run()
 		{
 			while ( true )
 			{
 				SteamClient.RunCallbacks();
+				try
+				{
+					if( SteamSocketManager != null )
+					{
+						SteamSocketManager
+					}
+				}
+			}
+		}
+
+		public void CreateSteamSocketServer() 
+		{
+			SteamSocketManager = SteamNetworkingSockets.CreateRelaySocket<SteamSocketManager>( 0 );
+			SteamConnectionManager = SteamNetworkingSockets.ConnectRelay<SteamConnectionManager>( PlayerSteamId );
+			Console.WriteLine( "SocketServer created" );
+		}
+
+		public void JoinSteamSocketServer(SteamId host )
+		{
+			if ( !isHost )
+			{
+				Console.WriteLine("Joining SocketServer");
+				SteamConnectionManager = SteamNetworkingSockets.ConnectRelay<SteamConnectionManager>( host, 0 );
 			}
 		}
 	}
