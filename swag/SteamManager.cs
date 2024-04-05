@@ -163,8 +163,16 @@ namespace swag
 				{
 					if( SteamSocketManager != null )
 					{
-						SteamSocketManager
+						SteamSocketManager.Receive();
 					}
+					if(SteamConnectionManager != null && SteamConnectionManager.Connected )
+					{
+						SteamConnectionManager.Receive();
+					}
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine ("an error occured: " +  e.Message );
 				}
 			}
 		}
